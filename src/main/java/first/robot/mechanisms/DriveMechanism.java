@@ -61,8 +61,8 @@ public class DriveMechanism implements Mechanism{
         leftLeader.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
-    public Command driveArcade(Double xSpeed, Double zRotation){
-        return runRepeatedly(() ->drive.arcadeDrive(xSpeed, zRotation)).named("arcade Drive");
+    public Command driveArcade(DoubleSupplier xSpeed, DoubleSupplier zRotation){
+        return runRepeatedly(() -> drive.arcadeDrive(xSpeed.getAsDouble(), zRotation.getAsDouble())).named("arcade Drive");
     }
 
 }

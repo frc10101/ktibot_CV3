@@ -22,7 +22,9 @@ public class Robot extends OpModeRobot {
   final XboxController driveController = new XboxController(Constants.OperatorConstants.DRIVER_CONTROLLER_PORT);
   final XboxController opController = new XboxController(Constants.OperatorConstants.OPERATOR_CONTROLLER_PORT);
 
-  public Robot() {}
+  public Robot() {
+    drive.setDefaultCommand(drive.driveArcade(driveController::getLeftY, driveController::getRightX));
+  }
 
   @Override
   public void robotPeriodic() {
