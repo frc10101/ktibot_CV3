@@ -22,7 +22,12 @@ public class CompTeleop implements OpMode {
     }
 
     @Override
-    public void periodic() {
+    public void start() {
         drive.driveArcade(driveController.getLeftY(), driveController.getRightX());
     }
+
+    // @Override
+    // public void periodic() {
+    //     drive.driveArcade(driveController.getLeftY(), driveController.getRightX());
+    // }
 }
