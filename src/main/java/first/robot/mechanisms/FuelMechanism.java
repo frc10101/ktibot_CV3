@@ -38,4 +38,12 @@ class FuelMechanism implements Mechanism {
       Coroutine.yield();
     }).named("intake");
   }
+
+  public Command eject() {
+    return run(Coroutine -> {
+      feederRoller.setVoltage(FuelConstants.INTAKING_FEEDER_VOLTAGE * -1);
+      intakeLauncherRoller.setVoltage(FuelConstants.INTAKING_INTAKE_VOLTAGE * -1);
+      Coroutine.yield();
+    }).named("eject");
+  }
 }
