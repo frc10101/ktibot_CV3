@@ -1,5 +1,6 @@
 package first.robot.mechanisms;
 
+import org.wpilib.command3.Command;
 import org.wpilib.command3.Mechanism;
 import org.wpilib.hardware.bus.CANPort;
 
@@ -28,5 +29,13 @@ class FuelMechanism implements Mechanism {
     launcherConfig.smartCurrentLimit(FuelConstants.LAUNCHER_MOTOR_CURRENT_LIMIT);
     intakeLauncherRoller.configure(launcherConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
+  }
+
+  public Command intake() {
+    return run(Coroutine -> {
+      intakeLauncherRoller.setVoltage(FuelConstants.INTAKING_INTAKE_VOLTAGE);
+      feederRoller.setVoltage(FuelConstants.INTAKING_FEEDER_VOLTAGE);
+      Coroutine.yield();
+    }).named("intake");
   }
 }
