@@ -6,21 +6,20 @@ package first.robot;
 
 import org.wpilib.command3.Scheduler;
 import org.wpilib.command3.button.CommandGamepad;
-import org.wpilib.driverstation.XboxController;
 import org.wpilib.framework.OpModeRobot;
 
 import first.robot.constants.Constants;
 import first.robot.constants.DriverConstants;
 import first.robot.mechanisms.DriveMechanism;
 import first.robot.mechanisms.ExampleMechanism;
+import first.robot.mechanisms.FuelMechanism;
 
 public class Robot extends OpModeRobot {
   final ExampleMechanism exampleMechanism = new ExampleMechanism();
   final DriveMechanism drive = new DriveMechanism();
-  final CommandGamepad exampleController =
-      new CommandGamepad(DriverConstants.DRIVER_CONTROLLER_PORT);
-  final XboxController driveController = new XboxController(Constants.OperatorConstants.DRIVER_CONTROLLER_PORT);
-  final XboxController opController = new XboxController(Constants.OperatorConstants.OPERATOR_CONTROLLER_PORT);
+  final FuelMechanism fuel = new FuelMechanism();
+  final CommandGamepad exampleController = new CommandGamepad(DriverConstants.DRIVER_CONTROLLER_PORT);
+  final CommandGamepad driveController = new CommandGamepad(Constants.OperatorConstants.DRIVER_CONTROLLER_PORT);
 
   public Robot() {
     drive.setDefaultCommand(drive.driveArcade(driveController::getLeftY, driveController::getRightX));

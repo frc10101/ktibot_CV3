@@ -14,7 +14,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import first.robot.constants.Constants.FuelConstants;
 
-class FuelMechanism implements Mechanism {
+public class FuelMechanism implements Mechanism {
   SparkMax feederRoller;
   SparkMax intakeLauncherRoller;
 
@@ -35,32 +35,41 @@ class FuelMechanism implements Mechanism {
 
   public Command intake() {
     return run(Coroutine -> {
-      intakeLauncherRoller.setVoltage(FuelConstants.INTAKING_INTAKE_VOLTAGE);
-      feederRoller.setVoltage(FuelConstants.INTAKING_FEEDER_VOLTAGE);
-      Coroutine.yield();
-    }).named("intake");
+      while (true) {
+        intakeLauncherRoller.setVoltage(FuelConstants.INTAKING_INTAKE_VOLTAGE);
+        feederRoller.setVoltage(FuelConstants.INTAKING_FEEDER_VOLTAGE);
+        Coroutine.yield();
+      }
+    }).whenCanceled(this::stop).named("intake");
   }
 
   public Command eject() {
     return run(Coroutine -> {
-      feederRoller.setVoltage(FuelConstants.INTAKING_FEEDER_VOLTAGE * -1);
-      intakeLauncherRoller.setVoltage(FuelConstants.INTAKING_INTAKE_VOLTAGE * -1);
-      Coroutine.yield();
-    }).named("eject");
+      while (true) {
+        feederRoller.setVoltage(FuelConstants.INTAKING_FEEDER_VOLTAGE * -1);
+        intakeLauncherRoller.setVoltage(FuelConstants.INTAKING_INTAKE_VOLTAGE * -1);
+        Coroutine.yield();
+      }
+    }).whenCanceled(this::stop).named("eject");
   }
 
   public Command launchVoltage() {
     return run(Coroutine -> {
-      feederRoller.setVoltage(FuelConstants.LAUNCHING_FEEDER_VOLTAGE);
-      intakeLauncherRoller.setVoltage(FuelConstants.LAUNCHING_LAUNCHER_VOLTAGE);
-      Coroutine.yield();
+      while (true) {
+        feederRoller.setVoltage(FuelConstants.LAUNCHING_FEEDER_VOLTAGE);
+        intakeLauncherRoller.setVoltage(FuelConstants.LAUNCHING_LAUNCHER_VOLTAGE);
+        Coroutine.yield();
+      }
     }).named("set launch voltages");
   }
 
   public Command spinUpVoltage() {
     return run(Coroutine -> {
-      feederRoller.setVoltage(FuelConstants.SPIN_UP_FEEDER_VOLTAGE);
-      intakeLauncherRoller.setVoltage(FuelConstants.LAUNCHING_LAUNCHER_VOLTAGE);
+      while (true) {
+        feederRoller.setVoltage(FuelConstants.SPIN_UP_FEEDER_VOLTAGE);
+        intakeLauncherRoller.setVoltage(FuelConstants.LAUNCHING_LAUNCHER_VOLTAGE);
+        Coroutine.yield();
+      }
     }).named("spin up voltages");
   }
 
@@ -68,7 +77,12 @@ class FuelMechanism implements Mechanism {
     return run(Coroutine -> {
       Coroutine.fork(spinUpVoltage());
       Coroutine.wait(Seconds.of(5));
-      Coroutine.fork(launchVoltage());
-    }).named("launch fuel");
+      Coroutine.await(launchVoltage());
+    }).whenCanceled(this::stop).named("launch fuel");
+  }
+
+  private void stop() {
+    feederRoller.setVoltage(0);
+    intakeLauncherRoller.setVoltage(0);
   }
 }

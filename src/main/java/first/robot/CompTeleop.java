@@ -1,32 +1,16 @@
 package first.robot;
 
-import java.util.function.DoubleSupplier;
-
-import org.wpilib.driverstation.XboxController;
-import org.wpilib.driverstation.Gamepad.Axis;
 import org.wpilib.opmode.OpMode;
+import org.wpilib.opmode.Teleop;
 
-import first.robot.mechanisms.DriveMechanism;
-
+@Teleop
 public class CompTeleop implements OpMode {
-    XboxController driveController;
-    XboxController opController;
-    DriveMechanism drive;
-
-
-    CompTeleop(Robot robot){
-        driveController = robot.driveController;
-        opController = robot.opController;
-        drive = robot.drive;
-
+    public CompTeleop(Robot robot){
+        robot.driveController.leftBumper().whileTrue(robot.fuel.intake());
+        robot.driveController.rightBumper().whileTrue(robot.fuel.launch());
     }
 
     @Override
     public void start() {
     }
-
-    // @Override
-    // public void periodic() {
-    //     drive.driveArcade(driveController.getLeftY(), driveController.getRightX());
-    // }
 }
