@@ -1,5 +1,7 @@
 package first.robot.mechanisms;
 
+import static org.wpilib.units.Units.Seconds;
+
 import org.wpilib.command3.Command;
 import org.wpilib.command3.Mechanism;
 import org.wpilib.hardware.bus.CANPort;
@@ -45,5 +47,28 @@ class FuelMechanism implements Mechanism {
       intakeLauncherRoller.setVoltage(FuelConstants.INTAKING_INTAKE_VOLTAGE * -1);
       Coroutine.yield();
     }).named("eject");
+  }
+
+  public Command launchVoltage() {
+    return run(Coroutine -> {
+      feederRoller.setVoltage(FuelConstants.LAUNCHING_FEEDER_VOLTAGE);
+      intakeLauncherRoller.setVoltage(FuelConstants.LAUNCHING_LAUNCHER_VOLTAGE);
+      Coroutine.yield();
+    }).named("set launch voltages");
+  }
+
+  public Command spinUpVoltage() {
+    return run(Coroutine -> {
+      feederRoller.setVoltage(FuelConstants.SPIN_UP_FEEDER_VOLTAGE);
+      intakeLauncherRoller.setVoltage(FuelConstants.LAUNCHING_LAUNCHER_VOLTAGE);
+    }).named("spin up voltages");
+  }
+
+  public Command launch() {
+    return run(Coroutine -> {
+      Coroutine.fork(spinUpVoltage());
+      Coroutine.wait(Seconds.of(5));
+      Coroutine.fork(launchVoltage());
+    }).named("launch fuel");
   }
 }
